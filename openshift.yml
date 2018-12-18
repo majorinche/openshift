@@ -1,0 +1,31 @@
+---
+- hosts: all
+  tasks:
+    - name: copy ceph repo files
+      copy:
+         src: "{{ item.src }}"
+         dest: "{{ item.dest }}"
+         owner: root
+         group: root
+         mode: 0644
+      with_items:
+         - {src: "/root/python_tools/ceph.repo",dest: "/etc/yum.repos.d/ceph.repo" } 
+         - {src: "/root/python_tools/epel.repo",dest: "/etc/yum.repos.d/epel.repo" } 
+         - {src: "/root/python_tools/openshift.repo",dest: "/etc/yum.repos.d/openshift.repo" } 
+         - {src: "/root/python_tools/static-routes",dest: "/etc/sysconfig/static-routes" }
+         - {src: "/root/python_tools/RPM-GPG-KEY-CentOS-SIG-PaaS",dest: "/etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-SIG-PaaS" }
+         - {src: "/root/python_tools/RPM-GPG-KEY-EPEL-7",dest: "/etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7" }
+    - name: install ntp
+      yum: name=ntp state=latest
+    - name: start ntp and enable
+      service: name=ntpd state=started enabled=yes
+    - name: check current time
+      shell: date
+      args: 
+        executable: /bin/bash
+    - name: empty /var/log/messages
+      shell: "> /var/log/messages"
+      args: 
+        executable: /bin/bash
+    - name: install ceph-common
+      yum: name=ceph-common state=latest

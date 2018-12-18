@@ -1,0 +1,14 @@
+kind: Service
+apiVersion: v1
+metadata:
+    annotations:
+      service.alpha.openshift.io/dependencies: '[{"name": "test-mc001", "namespace": "", "kind": "Service"}]'
+    name: tomcat05
+spec:
+    ports:
+    - name: web
+      port: 8080
+      targetPort: 8080
+    selector:
+      name: tomcat05
+

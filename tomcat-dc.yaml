@@ -1,0 +1,22 @@
+kind: "DeploymentConfig"
+apiVersion: "v1"
+metadata:
+  name: "tomcat05"
+spec:
+  template: 
+    metadata:
+      labels:
+        name: "tomcat05"
+    spec:
+      containers:
+        - name: "helloworld"
+          image: "docker-registry.default.svc:5000/j3/tomcat-is"
+          ports:
+            - containerPort: 8081
+              protocol: "TCP"
+  replicas: 1 
+  strategy: 
+    type: "Rolling"
+  paused: false 
+  revisionHistoryLimit: 2 
+  minReadySeconds: 0 

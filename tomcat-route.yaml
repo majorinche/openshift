@@ -1,0 +1,9 @@
+kind: Route
+apiVersion: v1
+metadata:
+    name: tomcat-route
+spec:
+    host: tomcat05.cup.com
+    to:
+      kind: Service
+      name: tomcat05

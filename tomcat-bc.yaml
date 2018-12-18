@@ -1,0 +1,20 @@
+kind: "BuildConfig"
+apiVersion: "v1"
+metadata:
+  name: "tomcat-bc" 
+spec:
+  runPolicy: "Serial" 
+  source: 
+    git:
+      uri: "http://gitlab02.cup.com/jinguo/jenkins-java.git"
+  strategy: 
+    sourceStrategy:
+      from:
+        kind: "ImageStreamTag"
+        name: "tomcat:latest"
+        namespace: "openshift"
+      scripts: "http://172.16.25.213/"
+  output: 
+    to:
+      kind: "ImageStreamTag"
+      name: "tomcat-is:latest"

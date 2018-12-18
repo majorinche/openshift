@@ -1,0 +1,28 @@
+kind: BuildConfig
+apiVersion: v1
+metadata:
+    annotations:
+      pipeline.alpha.openshift.io/uses: '[{"name": "python08", "namespace": "", "kind": "DeploymentConfig"}]'
+    labels:
+      name: tomcat-pp
+    name: tomcat-pp
+spec:
+    strategy:
+      jenkinsPipelineStrategy:
+        jenkinsfile: |-
+                pipeline {
+                    agent any
+                    stages{
+                    stage('build') {
+                        steps{
+                            openshiftBuild(bldCfg: 'tomcat-bc', showBuildLogs: 'true')
+                          }
+                    }
+                    stage('deploy') {
+                        steps{
+                            openshiftDeploy(depCfg: 'tomcat05')
+                          }
+                    }
+                    }
+                }
+      type: JenkinsPipeline
