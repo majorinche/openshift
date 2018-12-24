@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: my-zk
+  name: my-zk
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-zk
+  template:
+    metadata:
+      labels:
+        app: my-zk
+    spec:
+      containers:
+      - command:
+        - echo
+        - "${zk_server_id}"
+        env:
+        - name: zk_server_id
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        image: zookeeper
+        name: my-zk-server
+        ports:
+        - containerPort: 2181
+          name: client
+          protocol: TCP
+        - containerPort: 2888
+          name: server
+          protocol: TCP
+        - containerPort: 3888
+          name: leader-election
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /var/lib/zookeeper/data
+          name: my-data-dir
+        - mountPath: /var/lib/zookeeper/log
+          name: my-data-log-dir
+  volumeClaimTemplates:
+  - metadata:
+      name: my-data-dir
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 5Gi
+  - metadata:
+      name: my-data-log-dir
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 5Gi

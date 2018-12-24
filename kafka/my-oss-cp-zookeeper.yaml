@@ -1,0 +1,170 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  creationTimestamp: 2018-12-24T06:45:58Z
+  generation: 1
+  labels:
+    app: cp-zookeeper
+    chart: cp-zookeeper-0.1.0
+    heritage: Tiller
+    release: my-oss
+  name: my-oss-cp-zookeeper
+  namespace: t-kafka-01
+  resourceVersion: "41759355"
+  selfLink: /apis/apps/v1/namespaces/t-kafka-01/statefulsets/my-oss-cp-zookeeper
+  uid: 91f7146b-0747-11e9-b7e3-6c92bf026fd9
+spec:
+  podManagementPolicy: OrderedReady
+  replicas: 3
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: cp-zookeeper
+      release: my-oss
+  serviceName: my-oss-cp-zookeeper-headless
+  template:
+    metadata:
+      annotations:
+        prometheus.io/port: "5556"
+        prometheus.io/scrape: "true"
+      creationTimestamp: null
+      labels:
+        app: cp-zookeeper
+        release: my-oss
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - cp-zookeeper
+                - key: release
+                  operator: In
+                  values:
+                  - my-oss
+              topologyKey: kubernetes.io/hostname
+            weight: 1
+      containers:
+      - command:
+        - java
+        - -XX:+UnlockExperimentalVMOptions
+        - -XX:+UseCGroupMemoryLimitForHeap
+        - -XX:MaxRAMFraction=1
+        - -XshowSettings:vm
+        - -jar
+        - jmx_prometheus_httpserver.jar
+        - "5556"
+        - /etc/jmx-zookeeper/jmx-zookeeper-prometheus.yml
+        image: solsson/kafka-prometheus-jmx-exporter@sha256:6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e78946143
+        imagePullPolicy: IfNotPresent
+        name: prometheus-jmx-exporter
+        ports:
+        - containerPort: 5556
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /etc/jmx-zookeeper
+          name: jmx-config
+      - command:
+        - bash
+        - -c
+        - ZOOKEEPER_SERVER_ID=$((${HOSTNAME##*-}+1)) && /etc/confluent/docker/run
+        env:
+        - name: KAFKA_HEAP_OPTS
+          value: -Xms512M -Xmx512M
+        - name: KAFKA_JMX_PORT
+          value: "5555"
+        - name: ZOOKEEPER_TICK_TIME
+          value: "2000"
+        - name: ZOOKEEPER_SYNC_LIMIT
+          value: "5"
+        - name: ZOOKEEPER_INIT_LIMIT
+          value: "10"
+        - name: ZOOKEEPER_MAX_CLIENT_CNXNS
+          value: "60"
+        - name: ZOOKEEPER_AUTOPURGE_SNAP_RETAIN_COUNT
+          value: "3"
+        - name: ZOOKEEPER_AUTOPURGE_PURGE_INTERVAL
+          value: "24"
+        - name: ZOOKEEPER_CLIENT_PORT
+          value: "2181"
+        - name: ZOOKEEPER_SERVERS
+          value: my-oss-cp-zookeeper-0.my-oss-cp-zookeeper-headless.t-kafka-01:2888:3888;my-oss-cp-zookeeper-1.my-oss-cp-zookeeper-headless.t-kafka-01:2888:3888;my-oss-cp-zookeeper-2.my-oss-cp-zookeeper-headless.t-kafka-01:2888:3888
+        - name: ZOOKEEPER_SERVER_ID
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        image: confluentinc/cp-zookeeper:5.0.1
+        imagePullPolicy: IfNotPresent
+        name: cp-zookeeper-server
+        ports:
+        - containerPort: 2181
+          name: client
+          protocol: TCP
+        - containerPort: 2888
+          name: server
+          protocol: TCP
+        - containerPort: 3888
+          name: leader-election
+          protocol: TCP
+        - containerPort: 5555
+          name: jmx
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /var/lib/zookeeper/data
+          name: datadir
+        - mountPath: /var/lib/zookeeper/log
+          name: datalogdir
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: my-oss-cp-zookeeper-jmx-configmap
+        name: jmx-config
+  updateStrategy:
+    type: RollingUpdate
+  volumeClaimTemplates:
+  - metadata:
+      creationTimestamp: null
+      name: datadir
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 5Gi
+    status:
+      phase: Pending
+  - metadata:
+      creationTimestamp: null
+      name: datalogdir
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 5Gi
+    status:
+      phase: Pending
+status:
+  collisionCount: 0
+  currentReplicas: 3
+  currentRevision: my-oss-cp-zookeeper-79bd55757b
+  observedGeneration: 1
+  readyReplicas: 3
+  replicas: 3
+  updateRevision: my-oss-cp-zookeeper-79bd55757b
