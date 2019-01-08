@@ -1,0 +1,98 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    openshift.io/deployment-config.latest-version: "2"
+    openshift.io/deployment-config.name: iperf3-client
+    openshift.io/deployment.name: iperf3-client-2
+    openshift.io/generated-by: OpenShiftWebConsole
+    openshift.io/scc: anyuid
+  creationTimestamp: 2019-01-08T06:44:31Z
+  generateName: iperf3-client-2-
+  labels:
+    app: iperf3-client
+    deployment: iperf3-client-2
+    deploymentconfig: iperf3-client
+  name: iperf3-client-2-mswdf
+  namespace: t-kafka-04
+  ownerReferences:
+  - apiVersion: v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: ReplicationController
+    name: iperf3-client-2
+    uid: d8863db2-1310-11e9-893e-6c92bf025c32
+  resourceVersion: "47732690"
+  selfLink: /api/v1/namespaces/t-kafka-04/pods/iperf3-client-2-mswdf
+  uid: da1a6483-1310-11e9-893e-6c92bf025c32
+spec:
+  containers:
+  - command:
+    - /bin/sh
+    - -c
+    - sleep infinity
+    image: networkstatic/iperf3@sha256:12c4ad04039b7dc7e5183984ea4dc7e2015b439b3b5c2c48f3993d425c3996d9
+    imagePullPolicy: Always
+    name: iperf3-client
+    ports:
+    - containerPort: 5201
+      protocol: TCP
+    resources: {}
+    securityContext:
+      capabilities:
+        drop:
+        - MKNOD
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: default-token-dgp7c
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  imagePullSecrets:
+  - name: default-dockercfg-xj8r7
+  nodeName: openshift-app1.cup.com
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext:
+    fsGroup: 1000890000
+    seLinuxOptions:
+      level: s0:c30,c10
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  volumes:
+  - name: default-token-dgp7c
+    secret:
+      defaultMode: 420
+      secretName: default-token-dgp7c
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: 2019-01-08T06:44:30Z
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: 2019-01-08T06:44:37Z
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: 2019-01-08T06:44:31Z
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: docker://111dc91d5d82df445c092f0156d7344521b82b9e655e2f4c7cbed649de9fc329
+    image: docker.io/networkstatic/iperf3@sha256:12c4ad04039b7dc7e5183984ea4dc7e2015b439b3b5c2c48f3993d425c3996d9
+    imageID: docker-pullable://docker.io/networkstatic/iperf3@sha256:12c4ad04039b7dc7e5183984ea4dc7e2015b439b3b5c2c48f3993d425c3996d9
+    lastState: {}
+    name: iperf3-client
+    ready: true
+    restartCount: 0
+    state:
+      running:
+        startedAt: 2019-01-08T06:44:36Z
+  hostIP: 172.16.25.126
+  phase: Running
+  podIP: 10.128.1.19
+  qosClass: BestEffort
+  startTime: 2019-01-08T06:44:30Z
