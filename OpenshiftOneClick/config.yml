@@ -1,0 +1,17 @@
+---
+CHANGEREPO: true
+HOSTNAME: os311.cup.com
+
+Change_Base_Registry: false
+Harbor_Url: harbor.apps.it.example.com
+
+FULL_INSTALL: true
+SAMPLE_TEMPLATES: true
+
+CICD_INSTALL: true
+
+PV_COUNT: 20
+
+# GOGS_USER: root
+GOGS_PASSWORD: 123456
+GOGS_EMAIL: abc@123.com
