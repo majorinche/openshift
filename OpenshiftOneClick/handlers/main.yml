@@ -1,6 +1,0 @@
----
-- name: restart nfs-server
-  service: name=nfs state=restarted
-
-- name: restart dnsmasq
-  service: name=dnsmasq state=restarted
