@@ -1,0 +1,7 @@
+apiVersion: mysql.oracle.com/v1alpha1
+kind: Cluster
+metadata:
+  name: multi-master
+spec:
+  multiMaster: true
+  members: 3

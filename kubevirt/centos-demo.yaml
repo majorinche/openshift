@@ -1,0 +1,36 @@
+apiVersion: kubevirt.io/v1alpha2
+kind: VirtualMachineInstance
+metadata:
+  name: testvmi-centos
+spec:
+  terminationGracePeriodSeconds: 30
+  domain:
+    resources:
+      requests:
+        memory: 1024M
+    devices:
+      disks:
+      - name: containerdisk
+        volumeName: registryvolume
+        disk:
+          bus: virtio
+      - name: emptydisk
+        volumeName: emptydiskvolume
+        disk:
+          bus: virtio
+      - disk:
+          bus: virtio
+        name: cloudinitdisk
+        volumeName: cloudinitvolume
+  volumes:
+  - name: registryvolume
+    containerDisk:
+      image: majorinche/kubevirt-centos:0.1
+  - name: emptydiskvolume
+    emptyDisk:
+      capacity: "3Gi"
+  - name: cloudinitvolume
+    cloudInitNoCloud:
+      userData: |-
+        password: majorin
+        chpasswd: { expire: False }
