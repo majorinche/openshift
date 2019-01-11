@@ -1,0 +1,48 @@
+apiVersion: kubevirt.io/v1alpha2
+kind: VirtualMachineInstance
+metadata:
+  name: cn04
+spec:
+  nodeSelector:
+    kubernetes.io/hostname: infra1.sonic.com
+  terminationGracePeriodSeconds: 30
+  domain:
+    resources:
+      requests:
+        cpu: 1
+        memory: 1024M
+      limits:
+        cpu: 1
+        memory: 1024M
+    devices:
+      disks:
+      - name: containerdisk
+        volumeName: registryvolume
+        disk:
+          bus: virtio
+      - name: emptydisk
+        volumeName: emptydiskvolume
+        disk:
+          bus: virtio
+      - disk:
+          bus: virtio
+        name: cloudinitdisk
+        volumeName: cloudinitvolume
+      interfaces:
+      - bridge: {}
+        name: default
+  networks:
+  - name: default
+    pod: {}
+  volumes:
+  - name: registryvolume
+    containerDisk:
+      image: majorinche/kubevirt-centos:0.1
+  - name: emptydiskvolume
+    emptyDisk:
+      capacity: "3Gi"
+  - name: cloudinitvolume
+    cloudInitNoCloud:
+      userData: |-
+        password: majorin
+        chpasswd: { expire: False }
