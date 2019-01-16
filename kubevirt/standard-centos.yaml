@@ -1,7 +1,7 @@
 apiVersion: kubevirt.io/v1alpha2
 kind: VirtualMachineInstance
 metadata:
-  name: cn04
+  name: pt03
 spec:
   nodeSelector:
     kubernetes.io/hostname: infra1.sonic.com
@@ -28,6 +28,10 @@ spec:
           bus: virtio
         name: cloudinitdisk
         volumeName: cloudinitvolume
+      - name: mypvcdisk
+        volumeName: mypvc
+        disk:
+          bus: virtio
       interfaces:
       - bridge: {}
         name: default
@@ -46,3 +50,6 @@ spec:
       userData: |-
         password: majorin
         chpasswd: { expire: False }
+  - name: mypvc
+    persistentVolumeClaim:
+      claimName: nfs-pvc
