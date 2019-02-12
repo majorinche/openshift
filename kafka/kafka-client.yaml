@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: kafka-client
+  name: kafka-client-06
 spec:
   containers:
   - name: kafka-client
@@ -10,4 +10,10 @@ spec:
       - sh
       - -c
       - "exec tail -f /dev/null"
-
+    resources:
+        limits:
+          cpu: '16'
+          memory: 32G
+        requests:
+          cpu: '16'
+          memory: 32G
