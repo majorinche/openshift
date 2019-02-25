@@ -1,0 +1,16 @@
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+  name: cup-com
+  namespace: default
+spec:
+  secretName: cup-com-tls
+  issuerRef:
+    name: ca-issuer
+    kind: Issuer
+  commonName: cup.com
+  organization:
+  - cup CA
+  dnsNames:
+  - cup.com
+  - okd-platform.cup.com

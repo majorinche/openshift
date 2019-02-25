@@ -1,0 +1,90 @@
+ 1113  cd /root/go/src
+ 1114  ls
+ 1115  cd github.com/
+ 1116  ls
+ 1117  cd jetstack/
+ 1118  ls
+ 1119  cd cert-manager/
+ 1120  ls
+ 1121  cd de
+ 1122  cd deploy/
+ 1123  ls
+ 1124  cd manifests/
+ 1125  ls
+ 1126  oc get pod
+ 1127  oc new-project cert-manager
+ 1128  ls
+ 1129  oc apply -f cert-manager.yaml 
+ 1130  oc get all
+ 1131  oc get all -w
+ 1132  oc get pod -w
+ 1133  kubectl label namespace cert-manager certmanager.k8s.io/disable-validation=tru
+ 1134  kubectl label namespace cert-manager certmanager.k8s.io/disable-validation=true
+ 1135  oc get pod -w
+ 1136  oc get pod -w -o wide
+ 1137  ls
+ 1138  cd
+ 1139  pwd
+ 1140  ls
+ 1141  cd openshift/
+ 1142  ls
+ 1143  git pull
+ 1144  ls
+ 1145  mkdir cert-manager
+ 1146  cd cert-manager/
+ 1147  ls
+ 1148  cat <<EOF > test-resources.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cert-manager-test
+---
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Issuer
+metadata:
+  name: test-selfsigned
+  namespace: cert-manager-test
+spec:
+  selfSigned: {}
+---
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+  name: selfsigned-cert
+  namespace: cert-manager-test
+spec:
+  commonName: example.com
+  secretName: selfsigned-cert-tls
+  issuerRef:
+    name: test-selfsigned
+EOF
+
+ 1149  cat test-resources.yaml 
+ 1150  oc apply -f test-resources.yaml 
+ 1151  oc project cert-manager-test
+ 1152  oc get pod
+ 1153  oc get all
+ 1154  ls
+ 1155  openssl genrsa -out ca.key 2048
+ 1156  ls
+ 1157  openssl req -x509 -new -nodes -key ca.key -subj "/CN=cup.com" -days 3650 -reqexts v3_req -extensions v3_ca -out ca.crt
+ 1158  ls
+ 1159  kubectl create secret tls ca-key-pair    --cert=ca.crt    --key=ca.key    --namespace=default
+ 1160  oc project defauot
+ 1161  oc project default
+ 1162  oc get secret
+ 1163  ls
+ 1164  vim ca-issuer.yaml
+ 1165  oc apply -f ca-issuer.yaml 
+ 1166  oc get Issuer
+ 1167  vim cup-com-certificate.yaml
+ 1168  oc apply -f cup-com-certificate.yaml 
+ 1169  oc project
+ 1170  oc get all
+ 1171  oc get secret
+ 1172  oc get certificate
+ 1173  oc describe certificate cup-com
+ 1174  oc get secret
+ 1175  oc get secret cup-com-tls -o yam;
+ 1176  oc get secret cup-com-tls -o yaml
+ 1177  oc get secret tls-key-pair -o yaml
