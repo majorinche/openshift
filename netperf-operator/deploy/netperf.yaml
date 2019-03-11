@@ -1,0 +1,7 @@
+apiVersion: "app.example.com/v1alpha1"
+kind: "Netperf"
+metadata:
+  name: "infra1-master1"
+spec:
+  clientNode: "infra1.sonic.com"
+  serverNode: "master1.sonic.com"
