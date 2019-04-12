@@ -1,0 +1,79 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  labels:
+    app: bc-pipeline-pt02
+    name: bc-pipeline-pt02
+  name: bc-pipeline-pt02
+spec:
+  strategy:
+    jenkinsPipelineStrategy:
+      jenkinsfile: |+
+        #!groovy
+        node('maven') {
+          def mvnCmd = "mvn -s ./nexus_openshift_settings.xml"
+
+          stage('Checkout Source') {
+            git 'http://gogs:3000/majorin/pt02.git'
+            sh "ls -l"
+          }
+
+          def groupId    = getGroupIdFromPom("pom.xml")
+          def artifactId = getArtifactIdFromPom("pom.xml")
+          def version    = getVersionFromPom("pom.xml")
+          stage('Build war') {
+            sh "${mvnCmd} clean package -DskipTests"
+          }
+          stage('Unit Tests') {
+            echo "Unit Tests"
+            sh "${mvnCmd} test"
+          }
+          stage('Code Analysis') {
+            echo "Code Analysis"
+            sh "${mvnCmd} sonar:sonar -Dsonar.host.url=http://sonarqube:9000/ -Dsonar.projectName=${JOB_BASE_NAME}"
+          }
+          stage('Publish to Nexus') {
+            echo "Publish to Nexus"
+            sh "${mvnCmd} deploy -DskipTests=true -DaltDeploymentRepository=nexus::default::http://nexus3:8081/repository/maven-releases/"
+          }
+
+          stage('Build OpenShift Image') {
+            sh "cp ./target/pipeline-test-1.0.war ./ROOT.war"
+            sh "oc start-build pt --follow --from-file=./ROOT.war -n pt02-dev"
+          }
+
+          stage('Deploy to Dev') {
+           // sh "oc patch dc pt --patch '{\"spec\": { \"triggers\": [ { \"type\": \"ImageChange\", \"imageChangeParams\": { \"containerNames\": [ \"pt\" ], \"from\": { \"kind\": \"ImageStreamTag\", \"namespace\": \"pt02-dev\", \"name\": \"pt:latest\"}}}]}}' -n pt02-dev"
+            openshiftDeploy depCfg: 'pt', namespace: 'pt02-dev', verbose: 'false', waitTime: '', waitUnit: 'sec'
+            openshiftVerifyDeployment depCfg: 'pt', namespace: 'pt02-dev', replicaCount: '1', verbose: 'false', verifyReplicaCount: 'false', waitTime: '', waitUnit: 'sec'
+            openshiftVerifyService namespace: 'pt02-dev', svcName: 'pt', verbose: 'false'
+          }
+
+          stage('是否发布生产？') {
+            input "是否发布生产?"
+            echo "OK!"
+          }
+
+          stage('Deploy to Pro') {
+           // sh "oc patch dc pt --patch '{\"spec\": { \"triggers\": [ { \"type\": \"ImageChange\", \"imageChangeParams\": { \"containerNames\": [ \"pt\" ], \"from\": { \"kind\": \"ImageStreamTag\", \"namespace\": \"pt02-dev\", \"name\": \"pt:latest\"}}}]}}' -n pt02-pro"
+            openshiftDeploy depCfg: 'pt', namespace: 'pt02-pro', verbose: 'false', waitTime: '', waitUnit: 'sec'
+            openshiftVerifyDeployment depCfg: 'pt', namespace: 'pt02-pro', replicaCount: '1', verbose: 'false', verifyReplicaCount: 'true', waitTime: '', waitUnit: 'sec'
+            openshiftVerifyService namespace: 'pt02-pro', svcName: 'pt', verbose: 'false'
+          }
+
+        }
+
+        def getVersionFromPom(pom) {
+          def matcher = readFile(pom) =~ '<version>(.+)</version>'
+          matcher ? matcher[0][1] : null
+        }
+        def getGroupIdFromPom(pom) {
+          def matcher = readFile(pom) =~ '<groupId>(.+)</groupId>'
+          matcher ? matcher[0][1] : null
+        }
+        def getArtifactIdFromPom(pom) {
+          def matcher = readFile(pom) =~ '<artifactId>(.+)</artifactId>'
+          matcher ? matcher[0][1] : null
+        }
+
+    type: JenkinsPipeline

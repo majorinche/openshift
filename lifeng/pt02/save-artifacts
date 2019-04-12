@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# move the application source
+#cp /tmp/src/ROOT.war /usr/local/tomcat/webapps/mc.war
+#mv /tmp/src/*.war /usr/local/tomcat/webapps/
+#mv /tmp/src/server.xml /usr/local/tomcat/conf/
+#mv /tmp/src/tomcat-users.xml /usr/local/tomcat/conf/

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# run the application
+/usr/local/tomcat/bin/catalina.sh run
+#cp /tmp/src/pipeline-test-1.0.war /usr/local/tomcat/webapps/mc.war
