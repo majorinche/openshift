@@ -3,7 +3,7 @@
 # please make sure mysql and redis are ready
 
 echo "please make sure mysql and redis are ready"
-is="pt"
+is="pt02"
 basename="pt02"
 cicd_project="cicd-tools"
 dev_project="${basename}-dev"
