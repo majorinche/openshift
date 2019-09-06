@@ -1,0 +1,85 @@
+---
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  labels:
+    build: pt02
+  name: pt02
+spec:
+  output:
+    to:
+      kind: ImageStreamTag
+      name: pt02:latest
+  source:
+    binary: {}
+    type: Binary
+  strategy:
+    sourceStrategy:
+      from:
+        kind: DockerImage
+        name: tomcat:latest
+      scripts: http://httpd/
+    type: Source
+---
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: pt02
+  name: pt02
+spec:
+  replicas: 1
+  selector:
+    app: pt02
+    deploymentconfig: pt02
+  template:
+    metadata:
+      labels:
+        app: pt02
+        deploymentconfig: pt02
+    spec:
+      containers:
+      - image: docker-registry.default.svc:5000/pt02-dev/pt02:latest
+        imagePullPolicy: IfNotPresent
+        name: pt02
+  triggers:
+  - imageChangeParams:
+      containerNames:
+      - pt02
+      from:
+        kind: ImageStreamTag
+        name: pt02:latest
+        namespace: pt02-dev
+      lastTriggeredImage: docker-registry.default.svc:5000/pt02-dev/pt02:latest
+    type: ImageChange
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app: pt02
+  name: pt02
+spec:
+  host: pt02-dev.cup.com
+  port:
+    targetPort: 8080
+  to:
+    kind: Service
+    name: pt02
+    weight: 100
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: pt02
+  name: pt02
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: pt02
+    deploymentconfig: pt02
+  type: ClusterIP
