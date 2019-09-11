@@ -30,7 +30,7 @@ spec:
           value: /data/projects/fate/fateflow/arch/conf/server_config.json
         - name: SETTINGS
           value: /data/projects/fate/fateflow/fate_flow/settings.py
-        image: docker-repo.sonic.com:443/fate/egg-fateflow-storage:5.0
+        image: docker-repo.sonic.com:443/fate/egg-fateflow-storage:5.1
         imagePullPolicy: IfNotPresent
         name: egg-fateflow-storage-50001
         ports:
