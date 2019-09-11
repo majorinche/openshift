@@ -17,13 +17,15 @@ spec:
     spec:
       containers:
       - args:
-        - sed -i "s/party.id=.*/party.id=${PARTY-ID}/g" ${FEDERATION_PROPERTIES} && sed -i "s/meta-service-ip/${META-SERVICE-IP}/g" ${FEDERATION_PROPERTIES} && java -cp conf/:lib/*:fate-federation.jar com.webank.ai.fate.driver.Federation -c conf/federation.properties >> logs/console.log 2>>logs/error.log
+        - sed -i "s/party.id=.*/party.id=${PARTY-ID}/g" ${FEDERATION_PROPERTIES} && sed -i "s/meta-service-ip/${META_SERVICE_IP}/g" ${FEDERATION_PROPERTIES} && java -cp conf/:lib/*:fate-federation.jar com.webank.ai.fate.driver.Federation -c conf/federation.properties >> logs/console.log 2>>logs/error.log
         command:
         - /bin/sh
         - -c
         env:
         - name: PARTY_ID
           value: "50001"
-        image: docker-repo.sonic.com:443/fate/federation-50001:5.1
+        - name: META_SERVICE_IP
+          value: meta-service-50001 
+        image: docker-repo.sonic.com:443/fate/federation:5.1
         imagePullPolicy: IfNotPresent
         name: federation-50001
