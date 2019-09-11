@@ -1,0 +1,38 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: egg-fateflow-storage-50001
+  name: egg-fateflow-storage-50001
+spec:
+  replicas: 1
+  selector:
+    app: egg-fateflow-storage-50001
+    deploymentconfig: egg-fateflow-storage-50001
+  template:
+    metadata:
+      labels:
+        app: egg-fateflow-storage-50001
+        deploymentconfig: egg-fateflow-storage-50001
+    spec:
+      containers:
+      - args:
+        - sed -i "s/party.id=.*/party.id=${PARTY_ID}/g" ${EGG_PROPERTIES} && sed -i "s/roll-ip/roll-50001/g" ${SERVER_CONFIG_JSON} && sed -i "s/federation-ip/federation-50001/g" ${SERVER_CONFIG_JSON} && sed -i "s/fateflow-ip/fateflow-50001/g" ${SERVER_CONFIG_JSON} && sed -i "s/fateboard-ip/fateboard-50001/g" ${SERVER_CONFIG_JSON} && sed -i "s/proxy-ip/proxy-50001/g" ${SERVER_CONFIG_JSON} && sed -i "s/serving-ip/serving-50001/g" ${SERVER_CONFIG_JSON} && sed -i "s/party-id/${PARTY_ID}/g" ${SERVER_CONFIG_JSON} && sed -i "s/party-id/${PARTY_ID}/g" ${SETTINGS} && sed -i "s/fateflow-ip/fateflow-50001/g" ${SETTINGS} && sed -i "s/mysql-ip/mysql-50001/g" ${SETTINGS} && sed -i "s/redis-ip/redis-50001/g" ${SETTINGS} && cd /data/projects/fate/storage-service-cxx && sh service start && cd /data/projects/fate/egg && sh service start && cd /data/projects/fate/fateflow/fate_flow && sh service start
+        command:
+        - /bin/sh
+        - -c
+        env:
+        - name: PARTY_ID
+          value: "50001"
+        - name: EGG_PROPERTIES
+          value: /data/projects/fate/egg/conf/egg.properties 
+        - name: SERVER_CONFIG_JSON
+          value: /data/projects/fate/fateflow/arch/conf/server_config.json
+        - name: SETTINGS
+          value: /data/projects/fate/fateflow/fate_flow/settings.py
+        image: docker-repo.sonic.com:443/fate/egg-fateflow-storage:5.0
+        imagePullPolicy: IfNotPresent
+        name: egg-fateflow-storage-50001
+        ports:
+        - containerPort: 8080
+          protocol: TCP
