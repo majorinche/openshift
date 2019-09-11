@@ -26,6 +26,8 @@ spec:
           value: "50001"
         - name: META_SERVICE_IP
           value: meta-service-50001 
+        - name: FEDERATION_PROPERTIES
+          value: /data/projects/fate/federation/conf/federation.properties
         image: docker-repo.sonic.com:443/fate/federation:5.1
         imagePullPolicy: IfNotPresent
         name: federation-50001
