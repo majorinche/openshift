@@ -1,0 +1,29 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: federation-50001
+  name: federation-50001
+spec:
+  replicas: 1
+  selector:
+    app: federation-50001
+    deploymentconfig: federation-50001
+  template:
+    metadata:
+      labels:
+        app: federation-50001
+        deploymentconfig: federation-50001
+    spec:
+      containers:
+      - args:
+        - sed -i "s/party.id=.*/party.id=${PARTY-ID}/g" ${FEDERATION_PROPERTIES} && sed -i "s/meta-service-ip/${META-SERVICE-IP}/g" ${FEDERATION_PROPERTIES} && java -cp conf/:lib/*:fate-federation.jar com.webank.ai.fate.driver.Federation -c conf/federation.properties >> logs/console.log 2>>logs/error.log
+        command:
+        - /bin/sh
+        - -c
+        env:
+        - name: PARTY_ID
+          value: "50001"
+        image: docker-repo.sonic.com:443/fate/federation-50001:5.1
+        imagePullPolicy: IfNotPresent
+        name: federation-50001
