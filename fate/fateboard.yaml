@@ -2,18 +2,18 @@ apiVersion: apps.openshift.io/v1
 kind: DeploymentConfig
 metadata:
   labels:
-    app: fateboard-40001
-  name: fateboard-40001
+    app: fateboard-50001
+  name: fateboard-50001
 spec:
   replicas: 1
   selector:
-    app: fateboard-40001
-    deploymentconfig: fateboard-40001
+    app: fateboard-50001
+    deploymentconfig: fateboard-50001
   template:
     metadata:
       labels:
-        app: fateboard-40001
-        deploymentconfig: fateboard-40001
+        app: fateboard-50001
+        deploymentconfig: fateboard-50001
     spec:
       containers:
       - args:
@@ -34,14 +34,11 @@ spec:
               apiVersion: v1
               fieldPath: status.podIP
         - name: PARTY_ID
-          value: "40001"
+          value: "50001"
         - name: MYSQL_IP
-          value: mysql-40001
+          value: mysql-50001
         - name: MYSQL_DATABASE
           value: fateflowdb
-        image: docker-repo.sonic.com:443/fate/fateboard-40001@sha256:f3f09b5a94f7d1e6fa80269c73317ee686bd6ed303060c017cfda0f05729f1a3
+        image: docker-repo.sonic.com:443/fate/fateboard-50001:5.1
         imagePullPolicy: IfNotPresent
-        name: fateboard-40001
-        ports:
-        - containerPort: 8080
-          protocol: TCP
+        name: fateboard-50001
