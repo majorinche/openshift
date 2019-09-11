@@ -1,0 +1,38 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: proxy-50001
+  name: proxy-50001
+spec:
+  replicas: 1
+  selector:
+    app: proxy-50001
+    deploymentconfig: proxy-50001
+  template:
+    metadata:
+      labels:
+        app: proxy-50001
+        deploymentconfig: proxy-50001
+    spec:
+      containers:
+      - args:
+        - sed -i "s/party-id/${PARTY-ID}/g" ${PROXY_PROPERTIES} && sed -i "s/proxy-ip/${MY_POD_IP}/g" ${PROXY_PROPERTIES} && sed -i "s/proxy-ip/proxy-50001/g" ${ROUTE_TABLE_JSON} && sed -i "s/fateflow-ip/${MY_POD_IP}/g" ${ROUTE_TABLE_JSON}  && sed -i "s/host-proxy-ip/proxy-50001/g" ${ROUTE_TABLE_JSON} && sed -i "s/serving-ip/serving-50001/g" ${ROUTE_TABLE_JSON} && sed -i "s/guest-party-id/${GUEST_PARTY_ID}/g" ${ROUTE_TABLE_JSON} && sed -i "s/guest-proxy-ip/${GUEST_PROXY_IP}" ${ROUTE_TABLE_JSON} && java -cp conf/:lib/*:fate-proxy.jar com.webank.ai.fate.networking.Proxy -c conf/proxy.properties >> logs/console.log 2>>logs/error.log
+        command:
+        - /bin/sh
+        - -c
+        env:
+        - name: MY_POD_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.podIP
+        - name: PARTY_ID
+          value: "50001"
+        - name: PROXY_PROPERTIES
+          value: /data/projects/fate/proxy/conf/proxy.properties
+        - name: ROUTE_TABLE_JSON
+          value: /data/projects/fate/proxy/conf/route_table.json
+        image: docker-repo.sonic.com:443/fate/proxy:5.1
+        imagePullPolicy: IfNotPresent
+        name: proxy-50001
