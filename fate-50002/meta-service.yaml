@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - args:
-        - sed -i "s/party.id=.*/party.id=${PARTY_ID}/g" ${META_SERVICE_PROPERTIES} && sed -i "s/mysql-ip/mysql-50002/g" ${JDBC_PROPERTIES} && java -cp conf/:lib/*:fate-meta-service.jar com.webank.ai.fate.eggroll.MetaService -c conf/meta-service.properties >> logs/console.log 2>>logs/error.log
+        - sed -i "s/party.id=.*/party.id=${PARTY_ID}/g" ${META_SERVICE_PROPERTIES} && sed -i "s/mysql-ip/172.30.255.160/g" ${JDBC_PROPERTIES} && java -cp conf/:lib/*:fate-meta-service.jar com.webank.ai.fate.eggroll.MetaService -c conf/meta-service.properties >> logs/console.log 2>>logs/error.log
         command:
         - /bin/sh
         - -c

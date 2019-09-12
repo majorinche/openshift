@@ -36,7 +36,7 @@ spec:
         - name: PARTY_ID
           value: "50002"
         - name: MYSQL_IP
-          value: mysql-50002
+          value: 172.30.255.160
         - name: MYSQL_DATABASE
           value: fateflowdb
         image: docker-repo.sonic.com:443/fate/fateboard:5.1

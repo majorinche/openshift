@@ -25,7 +25,7 @@ spec:
         - name: PARTY_ID
           value: "50002"
         - name: META_SERVICE_IP
-          value: meta-service-50002 
+          value: 172.30.119.37 
         - name: FEDERATION_PROPERTIES
           value: /data/projects/fate/federation/conf/federation.properties
         image: docker-repo.sonic.com:443/fate/federation:5.1
