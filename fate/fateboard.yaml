@@ -39,6 +39,6 @@ spec:
           value: mysql-50001
         - name: MYSQL_DATABASE
           value: fateflowdb
-        image: docker-repo.sonic.com:443/fate/fateboard-50001:5.1
+        image: docker-repo.sonic.com:443/fate/fateboard:5.1
         imagePullPolicy: IfNotPresent
         name: fateboard-50001
