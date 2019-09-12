@@ -37,6 +37,8 @@ spec:
           value: /data/projects/fate/fateflow/fate_flow/settings.py
         - name: LOG_DIR
           value: /data/projects/fate/fateflow/logs
+        - name: PYTHONPATH
+          value: /data/projects/fate/fateflow
         image: docker-repo.sonic.com:443/fate/egg-fateflow-storage:5.1
         imagePullPolicy: IfNotPresent
         name: egg-fateflow-storage-50001
