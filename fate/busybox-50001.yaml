@@ -1,0 +1,29 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: busybox-50001
+  name: busybox-50001
+spec:
+  replicas: 1
+  selector:
+    app: busybox-50001
+    deploymentconfig: busybox-50001
+  template:
+    metadata:
+      labels:
+        app: busybox-50001
+        deploymentconfig: busybox-50001
+    spec:
+      containers:
+      - args:
+        - sleep 3600
+        command:
+        - /bin/sh
+        - -c
+        env:
+        - name: MYSQL_DATABASE
+          value: fateflowdb
+        image: docker-repo.sonic.com:443/library/busybox:latest
+        imagePullPolicy: IfNotPresent
+        name: busybox-50001

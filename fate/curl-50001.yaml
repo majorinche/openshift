@@ -1,0 +1,29 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: curl-50001
+  name: curl-50001
+spec:
+  replicas: 1
+  selector:
+    app: curl-50001
+    deploymentconfig: curl-50001
+  template:
+    metadata:
+      labels:
+        app: curl-50001
+        deploymentconfig: curl-50001
+    spec:
+      containers:
+      - args:
+        - curl proxy-50001:9370 >> /tmp/test && curl redis-50001:6379 >> /tmp/test && sleep 3600
+        command:
+        - /bin/sh
+        - -c
+        env:
+        - name: MYSQL_DATABASE
+          value: fateflowdb
+        image: docker-repo.sonic.com:443/majorinche/curl:latest
+        imagePullPolicy: IfNotPresent
+        name: curl-50001
