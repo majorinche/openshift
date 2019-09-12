@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - args:
-        - sed -i "s/party-id/${PARTY_ID}/g" ${PROXY_PROPERTIES} && sed -i "s/proxy-ip/${MY_POD_IP}/g" ${PROXY_PROPERTIES} && sed -i "s/proxy-ip/proxy-50001/g" ${ROUTE_TABLE_JSON} && sed -i "s/fateflow-ip/${MY_POD_IP}/g" ${ROUTE_TABLE_JSON}  && sed -i "s/host-proxy-ip/proxy-50001/g" ${ROUTE_TABLE_JSON} && sed -i "s/serving-ip/serving-50001/g" ${ROUTE_TABLE_JSON} && sed -i "s/guest-party-id/${GUEST_PARTY_ID}/g" ${ROUTE_TABLE_JSON} && sed -i "s/guest-proxy-ip/${GUEST_PROXY_IP}/g" ${ROUTE_TABLE_JSON} && java -cp conf/:lib/*:fate-proxy.jar com.webank.ai.fate.networking.Proxy -c conf/proxy.properties >> logs/console.log 2>>logs/error.log
+        - sed -i "s/party-id/${PARTY_ID}/g" ${PROXY_PROPERTIES} && sed -i "s/proxy-ip/${MY_POD_IP}/g" ${PROXY_PROPERTIES} && sed -i "s/host-proxy-ip/172.30.9.74/g" ${ROUTE_TABLE_JSON} && sed -i "s/host-party-id/50001/g" ${ROUTE_TABLE_JSON} && sed -i "s/federation-ip/172.30.98.76/g" ${ROUTE_TABLE_JSON} && sed -i "s/fateflow-ip/172.30.81.20/g" ${ROUTE_TABLE_JSON}  && sed -i "s/serving-ip/172.30.252.215/g" ${ROUTE_TABLE_JSON} && sed -i "s/guest-party-id/50002/g" ${ROUTE_TABLE_JSON} && sed -i "s/guest-proxy-ip/172.30.57.106/g" ${ROUTE_TABLE_JSON} && java -cp conf/:lib/*:fate-proxy.jar com.webank.ai.fate.networking.Proxy -c conf/proxy.properties >> logs/console.log 2>>logs/error.log
         command:
         - /bin/sh
         - -c
@@ -35,8 +35,6 @@ spec:
           value: /data/projects/fate/proxy/conf/route_table.json
         - name: GUEST_PARTY_ID
           value: "50002"
-        - name: GUEST_PROXY_IP
-          value: "proxy-50002"
         image: docker-repo.sonic.com:443/fate/proxy:5.1
         imagePullPolicy: IfNotPresent
         name: proxy-50001

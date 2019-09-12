@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - args:
-        - sed -i "s/party-id/${PARTY-ID}/g" ${SERVING_SERVER_PROPERTIES} && sed -i "s/serving-server-ip/${MY_POD_IP}/g" ${SERVING_SERVER_PROPERTIES} && sed -i "s/redis-ip/redis-50001/g" ${SERVING_SERVER_PROPERTIES} && sed -i "s/proxy-ip/proxy-50001/g" ${SERVING_SERVER_PROPERTIES}  && sed -i "s/roll-ip/roll-50001/g" ${SERVING_SERVER_PROPERTIES} && java -cp "conf/:lib/*:fate-serving-server.jar" com.webank.ai.fate.serving.ServingServer -c conf/serving-server.properties >> logs/console.log 2>>logs/error.log
+        - sed -i "s/party-id/${PARTY-ID}/g" ${SERVING_SERVER_PROPERTIES} && sed -i "s/serving-server-ip/${MY_POD_IP}/g" ${SERVING_SERVER_PROPERTIES} && sed -i "s/redis-ip/172.30.246.169/g" ${SERVING_SERVER_PROPERTIES} && sed -i "s/proxy-ip/172.30.9.74/g" ${SERVING_SERVER_PROPERTIES}  && sed -i "s/roll-ip/172.30.11.90/g" ${SERVING_SERVER_PROPERTIES} && java -cp "conf/:lib/*:fate-serving-server.jar" com.webank.ai.fate.serving.ServingServer -c conf/serving-server.properties >> logs/console.log 2>>logs/error.log
         command:
         - /bin/sh
         - -c

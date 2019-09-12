@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - args:
-        - sleep 3600
+        - nohup for i in `seq 1 10000`  && sleep 3600
         command:
         - /bin/sh
         - -c

@@ -27,7 +27,7 @@ spec:
         - name: ROLL_PROPERTIES
           value: /data/projects/fate/roll/conf/roll.properties
         - name: META_SERVICE_IP
-          value: meta-service-50001
+          value: 172.30.12.248
         image: docker-repo.sonic.com:443/fate/roll:5.1
         imagePullPolicy: IfNotPresent
         name: roll-50001
