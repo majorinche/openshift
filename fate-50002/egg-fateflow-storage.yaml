@@ -1,0 +1,47 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: egg-fateflow-storage-50002
+  name: egg-fateflow-storage-50002
+spec:
+  replicas: 1
+  selector:
+    app: egg-fateflow-storage-50002
+    deploymentconfig: egg-fateflow-storage-50002
+  template:
+    metadata:
+      labels:
+        app: egg-fateflow-storage-50002
+        deploymentconfig: egg-fateflow-storage-50002
+    spec:
+      containers:
+      - args:
+        - mkdir -p /data/projects/fate/data-dir && sed -i "s/party.id=.*/party.id=${PARTY_ID}/g" ${EGG_PROPERTIES} && sed -i "s/roll-ip/roll-50002/g" ${SERVER_CONFIG_JSON} && sed -i "s/federation-ip/federation-50002/g" ${SERVER_CONFIG_JSON} && sed -i "s/fateflow-ip/${MY_POD_IP}/g" ${SERVER_CONFIG_JSON} && sed -i "s/fateboard-ip/fateboard-50002/g" ${SERVER_CONFIG_JSON} && sed -i "s/proxy-ip/proxy-50002/g" ${SERVER_CONFIG_JSON} && sed -i "s/serving-ip/serving-50002/g" ${SERVER_CONFIG_JSON} && sed -i "s/party-id/${PARTY_ID}/g" ${SERVER_CONFIG_JSON} && sed -i "s/party-id/${PARTY_ID}/g" ${SETTINGS} && sed -i "s/fateflow-ip/${MY_POD_IP}/g" ${SETTINGS} && sed -i "s/mysql-ip/mysql-50002/g" ${SETTINGS} && sed -i "s/redis-ip/redis-50002/g" ${SETTINGS} && cd /data/projects/fate/storage-service-cxx && cd /data/projects/fate/storage-service-cxx && nohup ./storage-service -p 7778 -d /data/projects/fate/data-dir >> logs/console.log 2>>logs/error.log & && cd /data/projects/fate/egg && nohup java -cp conf/:lib/*:fate-egg.jar com.webank.ai.fate.eggroll.Egg -c conf/egg.properties >> logs/console.log 2>>logs/error.log & && source ${venv}/bin/activate && cd /data/projects/fate/fateflow/fate_flow && nohup /data/projects/fate/venv/bin/python fate_flow_server.py &
+        command:
+        - /bin/sh
+        - -c
+        env:
+        - name: PARTY_ID
+          value: "50002"
+        - name: MY_POD_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.podIP
+        - name: EGG_PROPERTIES
+          value: /data/projects/fate/egg/conf/egg.properties 
+        - name: SERVER_CONFIG_JSON
+          value: /data/projects/fate/fateflow/arch/conf/server_conf.json
+        - name: SETTINGS
+          value: /data/projects/fate/fateflow/fate_flow/settings.py
+        - name: LOG_DIR
+          value: /data/projects/fate/fateflow/logs
+        - name: PYTHONPATH
+          value: /data/projects/fate/fateflow
+        image: docker-repo.sonic.com:443/fate/egg-fateflow-storage:5.1
+        imagePullPolicy: IfNotPresent
+        name: egg-fateflow-storage-50002
+        ports:
+        - containerPort: 8080
+          protocol: TCP
