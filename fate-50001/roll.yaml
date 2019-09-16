@@ -1,0 +1,33 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: roll-50001
+  name: roll-50001
+spec:
+  replicas: 1
+  selector:
+    app: roll-50001
+    deploymentconfig: roll-50001
+  template:
+    metadata:
+      labels:
+        app: roll-50001
+        deploymentconfig: roll-50001
+    spec:
+      containers:
+      - args:
+        - sed -i "s/party.id=.*/party.id=${PARTY_ID}/g" ${ROLL_PROPERTIES} && sed -i "s/meta-service-ip/${META_SERVICE_IP}/g" ${ROLL_PROPERTIES} && java -cp conf/:lib/*:fate-roll.jar com.webank.ai.fate.eggroll.Roll -c conf/roll.properties >> logs/console.log 2>>logs/error.log
+        command:
+        - /bin/sh
+        - -c
+        env:
+        - name: PARTY_ID
+          value: "50001"
+        - name: ROLL_PROPERTIES
+          value: /data/projects/fate/roll/conf/roll.properties
+        - name: META_SERVICE_IP
+          value: 172.30.12.248
+        image: docker-repo.sonic.com:443/fate/roll:5.1
+        imagePullPolicy: IfNotPresent
+        name: roll-50001
