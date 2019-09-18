@@ -36,13 +36,13 @@ spec:
         - name: GUEST_PARTY_ID
           value: "60003"
         - name: HOST_PROXY_IP
-          value: "10.129.1.230"
+          value: proxy-60001.fate-60001.svc
         - name: HOST_PARTY_ID
           value: "60001"
         - name: FATEFLOW_IP
-          value: "10.130.0.205"
+          value: fateflow-60003
         - name: FEDERATION_IP 
-          value: "10.130.0.205"
+          value: federation-60003
         image: docker-repo.sonic.com:443/fate/proxy:5.1
         imagePullPolicy: IfNotPresent
         name: proxy-60003
