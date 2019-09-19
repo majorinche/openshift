@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: fateflow-50001
+  name: fateflow-50001
+spec:
+  clusterIP: 
+  ports:
+  - name: 9360-tcp
+    port: 9360
+    protocol: TCP
+    targetPort: 9360
+  - name: 9380-tcp
+    port: 9380
+    protocol: TCP
+    targetPort: 9380
+  selector:
+    deploymentconfig: fateflow-50001
+  type: ClusterIP

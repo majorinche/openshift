@@ -1,0 +1,34 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: fateflow-60003
+  name: fateflow-60003
+spec:
+  replicas: 1
+  selector:
+    app: fateflow-60003
+    deploymentconfig: fateflow-60003
+  template:
+    metadata:
+      labels:
+        app: fateflow-60003
+        deploymentconfig: fateflow-60003
+    spec:
+      containers:
+      - args:
+        - sleep 3600000
+        command:
+        - /bin/sh
+        - -c
+        env:
+        - name: PARTY_ID
+          value: "60003"
+        - name: MY_POD_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.podIP
+        image: docker-repo.sonic.com:443/fate/egg-fateflow-storage:5.2
+        imagePullPolicy: IfNotPresent
+        name: fateflow-60003
