@@ -1,0 +1,35 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: meta-service-60004
+  name: meta-service-60004
+spec:
+  replicas: 1
+  selector:
+    app: meta-service-60004
+    deploymentconfig: meta-service-60004
+  template:
+    metadata:
+      labels:
+        app: meta-service-60004
+        deploymentconfig: meta-service-60004
+    spec:
+      containers:
+      - args:
+        - sed -i "s/party.id=.*/party.id=${PARTY_ID}/g" ${META_SERVICE_PROPERTIES} && sed -i "s/mysql-ip/${MYSQL_IP}/g" ${JDBC_PROPERTIES} && java -cp conf/:lib/*:fate-meta-service.jar com.webank.ai.fate.eggroll.MetaService -c conf/meta-service.properties >> logs/console.log 2>>logs/error.log
+        command:
+        - /bin/sh
+        - -c
+        env:
+        - name: PARTY_ID
+          value: "60004"
+        - name: META_SERVICE_PROPERTIES
+          value: /data/projects/fate/meta-service/conf/meta-service.properties
+        - name: JDBC_PROPERTIES
+          value: /data/projects/fate/meta-service/conf/jdbc.properties
+        - name: MYSQL_IP
+          value: mysql-60004
+        image: docker-repo.sonic.com:443/fate/meta-service:5.1
+        imagePullPolicy: IfNotPresent
+        name: meta-service-60004

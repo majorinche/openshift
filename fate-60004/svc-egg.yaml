@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: egg-60004
+  name: egg-60004
+spec:
+  clusterIP: 
+  ports:
+  - name: 7888-tcp
+    port: 7888
+    protocol: TCP
+    targetPort: 7888
+  selector:
+    deploymentconfig: egg-60004
+  type: ClusterIP

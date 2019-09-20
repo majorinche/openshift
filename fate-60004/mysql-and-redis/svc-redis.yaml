@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: redis-60004
+  name: redis-60004
+spec:
+  clusterIP: 
+  ports:
+  - name: 6379-tcp
+    port: 6379
+    protocol: TCP
+    targetPort: 6379
+  selector:
+    deploymentconfig: redis-60004
+  type: ClusterIP
