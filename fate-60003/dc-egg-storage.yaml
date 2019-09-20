@@ -1,0 +1,32 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: egg-storage-60003
+  name: egg-storage-60003
+spec:
+  replicas: 1
+  selector:
+    app: egg-storage-60003
+    deploymentconfig: egg-storage-60003
+  template:
+    metadata:
+      labels:
+        app: egg-storage-60003
+        deploymentconfig: egg-storage-60003
+    spec:
+      containers:
+      - args:
+        - sed -i "s/party.id=.*/party.id=${PARTY_ID}/g" ${EGG_PROPERTIES} && sleep 3600000 
+        command:
+        - /bin/sh
+        - -c
+        env:
+        - name: PARTY_ID
+          value: "60003"
+        - name: EGG_PROPERTIES
+          value: /data/projects/fate/egg/conf/egg.properties
+        image: docker-repo.sonic.com:443/fate/egg-fateflow-storage:5.2
+        imagePullPolicy: IfNotPresent
+        name: egg-storage-60003
+

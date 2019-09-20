@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: egg-storage-60003
+  name: egg-storage-60003
+spec:
+  clusterIP: 
+  ports:
+  - name: 7888-tcp
+    port: 7888
+    protocol: TCP
+    targetPort: 7888
+  - name: 7778-tcp
+    port: 7778
+    protocol: TCP
+    targetPort: 7778
+  selector:
+    deploymentconfig: egg-storage-60003
+  type: ClusterIP
