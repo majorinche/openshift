@@ -1,0 +1,36 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: mysql-50002
+  name: mysql-50002
+spec:
+  replicas: 1
+  selector:
+    app: mysql-50002
+    deploymentconfig: mysql-50002
+  template:
+    metadata:
+      labels:
+        app: mysql-50002
+        deploymentconfig: mysql-50002
+    spec:
+      containers:
+      - env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: fate_dev
+        image: docker-repo.sonic.com:443/library/mysql:8.0.17
+        imagePullPolicy: IfNotPresent
+        name: mysql-50002
+        ports:
+        - containerPort: 3306
+          protocol: TCP
+        - containerPort: 33060
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: mysql-50002
+      volumes:
+      - name: mysql-50002
+        persistentVolumeClaim:
+          claimName: mysql-50002

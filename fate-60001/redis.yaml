@@ -1,0 +1,35 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: redis-60001
+  name: redis-60001
+spec:
+  replicas: 1
+  selector:
+    app: redis-60001
+    deploymentconfig: redis-60001
+  template:
+    metadata:
+      labels:
+        app: redis-60001
+        deploymentconfig: redis-60001
+    spec:
+      containers:
+      - env:
+        - name: REDIS_PASS
+          value: fate_dev
+        image: docker-repo.sonic.com:443/library/redis:5.0.2
+        imagePullPolicy: IfNotPresent
+        name: redis-60001
+        ports:
+        - containerPort: 6379
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /data
+          name: redis-60001
+      volumes:
+      - name: redis-60001
+        persistentVolumeClaim:
+          claimName: redis-60001
+
