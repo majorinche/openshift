@@ -1,0 +1,40 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: fateboard-70001
+  name: fateboard-70001
+spec:
+  replicas: 1
+  selector:
+    app: fateboard-70001
+    deploymentconfig: fateboard-70001
+  template:
+    metadata:
+      labels:
+        app: fateboard-70001
+        deploymentconfig: fateboard-70001
+    spec:
+      containers:
+      - args:
+        - sed -i "s#^spring.datasource.url=.*#spring.datasource.url=jdbc:mysql://${MYSQL_IP}:3306/${MYSQL_DATABASE}?characterEncoding=utf8\&characterSetResults=utf8\&autoReconnect=true\&failOverReadOnly=false\&serverTimezone=GMT%2B8#g" ${APPLICATION_PROPERTIES} && sed -i "s#^fate.url=.*#fate.url=http://${FATEFLOW_IP}:9380#g" ${APPLICATION_PROPERTIES} && java -Dspring.config.location=$configpath/application.properties -Dssh_config_file=$configpath -Xmx2048m -Xms2048m -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:gc.log -XX:+HeapDumpOnOutOfMemoryError  -jar $basepath/fateboard.jar >/dev/null 2>&1
+        command:
+        - /bin/sh
+        - -c
+        env:
+        - name: MY_POD_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.podIP
+        - name: MYSQL_IP
+          value: mysql-70001
+        - name: MYSQL_DATABASE
+          value: fateflowdb
+        - name: APPLICATION_PROPERTIES
+          value: /data/projects/fate/fateboard/conf/application.properties
+        - name: FATEFLOW_IP
+          value: fateflow-70001
+        image: docker-repo.sonic.com:443/fate/fateboard:5.1
+        imagePullPolicy: IfNotPresent
+        name: fateboard-70001

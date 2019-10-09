@@ -1,0 +1,55 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: fateflow-70001
+  name: fateflow-70001
+spec:
+  replicas: 1
+  selector:
+    app: fateflow-70001
+    deploymentconfig: fateflow-70001
+  template:
+    metadata:
+      labels:
+        app: fateflow-70001
+        deploymentconfig: fateflow-70001
+    spec:
+      containers:
+      - args:
+        - sed -i "s/roll-ip/${ROLL_IP}/g" ${SERVER_CONFIG_JSON} && sed -i "s/federation-ip/${FEDERATION_IP}/g" ${SERVER_CONFIG_JSON} && sed -i "s/fateflow-ip/${MY_POD_IP}/g" ${SERVER_CONFIG_JSON} && sed -i "s/fateboard-ip/${FATEBOARD_IP}/g" ${SERVER_CONFIG_JSON} && sed -i "s/proxy-ip/${PROXY_IP}/g" ${SERVER_CONFIG_JSON} && sed -i "s/serving-ip/${SERVING_IP}/g" ${SERVER_CONFIG_JSON} && sed -i "s/party-id/${PARTY_ID}/g" ${SERVER_CONFIG_JSON} && sed -i "s/party-id/${PARTY_ID}/g" ${SETTINGS} && sed -i "s/fateflow-ip/${MY_POD_IP}/g" ${SETTINGS} && sed -i "s/mysql-ip/${MYSQL_IP}/g" ${SETTINGS} && sed -i "s/redis-ip/${REDIS_IP}/g" ${SETTINGS} && cd /data/projects/fate/python/fate_flow/ && sleep 360000
+        command:
+        - /bin/sh
+        - -c
+        env:
+        - name: PARTY_ID
+          value: "70001"
+        - name: MY_POD_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.podIP
+        - name: ROLL_IP
+          value: roll-70001
+        - name: FEDERATION_IP
+          value: federation-70001
+        - name: FATEBOARD_IP
+          value: fateboard-70001
+        - name: PROXY_IP
+          value: proxy-70001
+        - name: MYSQL_IP
+          value: mysql-70001
+        - name: SERVING_IP
+          value: serving-70001 
+        - name: REDIS_IP
+          value: redis-70001
+        - name: SERVER_CONFIG_JSON
+          value: /data/projects/fate/python/arch/conf/server_conf.json
+        - name: SETTINGS
+          value: /data/projects/fate/python/fate_flow/settings.py
+        - name: LOG_DIR
+          value: /data/projects/fate/python/logs
+        image: docker-repo.sonic.com:443/fate/fate-fateflow:0.1
+        imagePullPolicy: IfNotPresent
+        name: fateflow-70001
+

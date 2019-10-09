@@ -1,0 +1,29 @@
+{
+    "servers": {
+        "roll": {
+            "host": "roll-60005",
+            "port": 8011
+        },
+        "federation": {
+            "host": "federation-60005",
+            "port": 9394
+        },
+        "fateflow": {
+            "host": "fateflow-60005",
+            "grpc.port": 9360,
+            "http.port": 9380
+        },
+        "fateboard": {
+            "host": "fateboard-60005",
+            "port": 8080
+        },
+        "proxy": {
+            "host": "proxy-60005",
+            "port": 9370
+        },
+        "servings": [
+            "serving-60005:8001"
+        ]
+    },
+    "party_id": "60005"
+}

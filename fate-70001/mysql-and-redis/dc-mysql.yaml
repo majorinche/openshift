@@ -1,0 +1,36 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: mysql-70001
+  name: mysql-70001
+spec:
+  replicas: 1
+  selector:
+    app: mysql-70001
+    deploymentconfig: mysql-70001
+  template:
+    metadata:
+      labels:
+        app: mysql-70001
+        deploymentconfig: mysql-70001
+    spec:
+      containers:
+      - env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: fate_dev
+        image: docker-repo.sonic.com:443/library/mysql:8.0.17
+        imagePullPolicy: IfNotPresent
+        name: mysql-70001
+        ports:
+        - containerPort: 3306
+          protocol: TCP
+        - containerPort: 33060
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: mysql-70001
+      volumes:
+      - name: mysql-70001
+        persistentVolumeClaim:
+          claimName: mysql-70001

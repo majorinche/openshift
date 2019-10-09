@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    volume.beta.kubernetes.io/storage-class: nfs-client
+    volume.beta.kubernetes.io/storage-provisioner: okd-platform.sonic.com/nfs-client-provisioner
+  finalizers:
+  - kubernetes.io/pvc-protection
+  name: mysql-70001
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi
