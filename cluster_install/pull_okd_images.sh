@@ -1,5 +1,6 @@
 #!/bin/sh
 
+yum -y install docker
 docker pull docker-repo.sonic.com:443/cockpit/kubernetes:latest
 docker pull docker-repo.sonic.com:443/openshift/origin-control-plane:v3.11.0
 docker pull docker-repo.sonic.com:443/openshift/origin-deployer:v3.11.0
