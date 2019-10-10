@@ -47,7 +47,7 @@ HTTP_PORT = 9380
 PARTY_ID = 60004
 WORK_MODE = 1
 USE_LOCAL_DATABASE = False
-SERVER_HOST_URL = "http://10.130.0.238:{}".format(HTTP_PORT)
+SERVER_HOST_URL = "http://10.130.0.239:{}".format(HTTP_PORT)
 
 DATABASE = {
     'name': 'fateflowdb',
