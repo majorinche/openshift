@@ -9,7 +9,7 @@
             "port": 9394
         },
         "fateflow": {
-            "host": "10.130.0.238",
+            "host": "10.130.0.239",
             "grpc.port": 9360,
             "http.port": 9380
         },
