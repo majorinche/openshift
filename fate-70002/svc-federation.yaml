@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: federation-70002
+  name: federation-70002
+spec:
+  clusterIP: 
+  ports:
+  - name: 9394-tcp
+    port: 9394
+    protocol: TCP
+    targetPort: 9394
+  selector:
+    deploymentconfig: federation-70002
+  type: ClusterIP

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: storage-70002
+  name: storage-70002
+spec:
+  clusterIP: 
+  ports:
+  - name: 7778-tcp
+    port: 7778
+    protocol: TCP
+    argetPort: 7778
+  selector:
+    deploymentconfig: egg-70002
+  type: ClusterIP

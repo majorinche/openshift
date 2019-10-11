@@ -1,0 +1,95 @@
+mysql -uroot -pfate_dev
+CREATE USER 'fate_dev'@'localhost' IDENTIFIED BY 'fate_dev';
+GRANT ALL ON *.* TO 'fate_dev'@'localhost';
+CREATE USER 'fate_dev'@'%' IDENTIFIED BY 'fate_dev';
+GRANT ALL ON *.* TO 'fate_dev'@'%';
+flush privileges;
+create database fateflowdb;
+CREATE DATABASE IF NOT EXISTS `metaservicedb`;
+
+USE `metaservicedb`;
+CREATE TABLE IF NOT EXISTS `metaservicedb`.`dtable` (
+  `table_id` SERIAL PRIMARY KEY,
+  `namespace` VARCHAR(2000) NOT NULL DEFAULT 'DEFAULT',
+  `table_name` VARCHAR(2000) NOT NULL,
+  `table_type` VARCHAR(255) NOT NULL,
+  `total_fragments` INT UNSIGNED NOT NULL,
+  `dispatcher` VARCHAR(2000) NOT NULL DEFAULT 'DEFAULT',
+  `serdes` VARCHAR(2000) NOT NULL DEFAULT 'MOD',
+  `storage_version` INT UNSIGNED NOT NULL DEFAULT 0,
+  `status` VARCHAR(255) NOT NULL,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE UNIQUE INDEX `idx_u_table_n_tn` ON `metaservicedb`.`dtable` (`namespace`(100), `table_name`(600), `status`(68));
+CREATE INDEX `idx_table_np` ON `metaservicedb`.`dtable` (`namespace`(768));
+CREATE INDEX `idx_table_tn` ON `metaservicedb`.`dtable` (`table_name`(768));
+CREATE INDEX `idx_table_tt` ON `metaservicedb`.`dtable` (`table_type`(255));
+CREATE INDEX `idx_table_s` ON `metaservicedb`.`dtable` (`status`(255));
+CREATE INDEX `idx_table_sd` ON `metaservicedb`.`dtable` (`serdes`(768));
+CREATE INDEX `idx_table_sv` ON `metaservicedb`.`dtable` (`storage_version`);
+
+CREATE TABLE IF NOT EXISTS `metaservicedb`.`fragment` (
+  `fragment_id` SERIAL PRIMARY KEY,
+  `table_id` BIGINT UNSIGNED NOT NULL,
+  `node_id` BIGINT UNSIGNED NOT NULL,
+  `fragment_order` INT UNSIGNED NOT NULL,
+  `status` VARCHAR(255) NOT NULL,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE UNIQUE INDEX `idx_u_fragment_ti_ni_fo` ON `metaservicedb`.`fragment` (`table_id`, `node_id`, `fragment_order`);
+CREATE INDEX `idx_fragment_ti` ON `metaservicedb`.`fragment` (`table_id`);
+CREATE INDEX `idx_fragment_ni` ON `metaservicedb`.`fragment` (`node_id`);
+CREATE INDEX `idx_fragment_s` ON `metaservicedb`.`fragment` (`status`(255));
+CREATE TABLE IF NOT EXISTS `metaservicedb`.`node` (
+  `node_id` SERIAL PRIMARY KEY,
+  `host` VARCHAR(1000),
+  `ip` VARCHAR(255) NOT NULL,
+  `port` INT NOT NULL,
+  `type` VARCHAR(255) NOT NULL,
+  `status` VARCHAR(255) NOT NULL,
+  `last_heartbeat_at` DATETIME DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE INDEX `idx_node_h` ON `metaservicedb`.`node` (`host`(768));
+CREATE INDEX `idx_node_i` ON `metaservicedb`.`node` (`ip`(255));
+CREATE INDEX `idx_node_t` ON `metaservicedb`.`node` (`type`(255));
+CREATE INDEX `idx_node_s` ON `metaservicedb`.`node` (`status`(255));
+
+CREATE TABLE IF NOT EXISTS `metaservicedb`.`task` (
+  `task_id` SERIAL PRIMARY KEY,
+  `task_name` VARCHAR(2000) NOT NULL,
+  `task_type` VARCHAR(255) NOT NULL,
+  `status` VARCHAR(255) NOT NULL,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE UNIQUE INDEX `idx_u_task_tn` ON `metaservicedb`.`task` (`task_name`(768));
+CREATE INDEX `idx_task_tt` ON `metaservicedb`.`task` (`task_type`(255));
+CREATE INDEX `idx_task_s` ON `metaservicedb`.`task` (`status`(255));
+
+CREATE TABLE IF NOT EXISTS `metaservicedb`.`result` (
+  `result_id` SERIAL PRIMARY KEY,
+  `result_name` VARCHAR(2000),
+  `result_type` VARCHAR(2000) NOT NULL,
+  `value` VARCHAR(10000) NOT NULL,
+  `status` VARCHAR(255) NOT NULL,
+  `task_id` BIGINT UNSIGNED,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE INDEX `idx_result_rn` ON `metaservicedb`.`result` (`result_name`(768));
+CREATE INDEX `idx_result_rt` ON `metaservicedb`.`result` (`result_type`(768));
+CREATE INDEX `idx_result_s` ON `metaservicedb`.`result` (`status`(255));
+CREATE INDEX `idx_result_ti` ON `metaservicedb`.`result` (`task_id`);
+
+INSERT INTO node (ip, port, type, status) values ('roll-70002', '8011', 'ROLL', 'HEALTHY');
+INSERT INTO node (ip, port, type, status) values ('proxy-70002', '9370', 'PROXY', 'HEALTHY');
+INSERT INTO node (ip, port, type, status) values ('10.128.0.30', '7888', 'EGG', 'HEALTHY');
+INSERT INTO node (ip, port, type, status) values ('10.128.0.30', '7778', 'STORAGE', 'HEALTHY');
