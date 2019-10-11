@@ -13,3 +13,7 @@ docker pull docker-repo.sonic.com:443/grafana/grafana:5.2.1
 docker tag docker-repo.sonic.com:443/openshift/oauth-proxy:v1.1.0 openshift/oauth-proxy:v1.1.0
 docker tag docker-repo.sonic.com:443/grafana/grafana:5.2.1 grafana/grafana:5.2.1
 docker pull docker-repo.sonic.com:443/openshift/origin-logging-curator5:v3.11.0
+docker pull docker-repo.sonic.com:443/openshift/prometheus:v2.3.2
+docker tag docker-repo.sonic.com:443/openshift/prometheus:v2.3.2 openshift/prometheus:v2.3.2
+docker pull docker-repo.sonic.com:443/openshift/prometheus-alertmanager:v0.15.2
+docker tag docker-repo.sonic.com:443/openshift/prometheus-alertmanager:v0.15.2 openshift/prometheus-alertmanager:v0.15.2
