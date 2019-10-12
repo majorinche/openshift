@@ -91,5 +91,5 @@ CREATE INDEX `idx_result_ti` ON `metaservicedb`.`result` (`task_id`);
 
 INSERT INTO node (ip, port, type, status) values ('roll-70002', '8011', 'ROLL', 'HEALTHY');
 INSERT INTO node (ip, port, type, status) values ('proxy-70002', '9370', 'PROXY', 'HEALTHY');
-INSERT INTO node (ip, port, type, status) values ('10.128.0.30', '7888', 'EGG', 'HEALTHY');
-INSERT INTO node (ip, port, type, status) values ('10.128.0.30', '7778', 'STORAGE', 'HEALTHY');
+INSERT INTO node (ip, port, type, status) values ('egg-70002', '7888', 'EGG', 'HEALTHY');
+INSERT INTO node (ip, port, type, status) values ('10.130.0.21', '7778', 'STORAGE', 'HEALTHY');
