@@ -10,6 +10,7 @@ batch_copy(){
 }
 
 single_copy(){
+	yum -y install docker
 	scp -rp git:/etc/docker/certs.d/docker-repo.sonic.com /etc/docker/certs.d/
         mv /etc/docker/certs.d/docker-repo.sonic.com/docker-repo.sonic.com.cert /etc/docker/certs.d/docker-repo.sonic.com/docker-repo.sonic.com.crt
 	service docker restart
