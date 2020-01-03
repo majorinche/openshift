@@ -23,4 +23,6 @@ docker pull docker-repo.sonic.com:443/coreos/kube-rbac-proxy:v0.3.1
 docker tag docker-repo.sonic.com:443/coreos/kube-rbac-proxy:v0.3.1 coreos/kube-rbac-proxy:v0.3.1
 docker pull docker-repo.sonic.com:443/nfvpe/multus:v3.2
 docker tag docker-repo.sonic.com:443/nfvpe/multus:v3.2 nfvpe/multus:v3.2
+docker pull docker-repo.sonic.com:443/openshift/origin-metrics-hawkular-metrics:v3.11.0
+docker pull docker-repo.sonic.com:443/openshift/origin-metrics-cassandra:v3.11.0
 
