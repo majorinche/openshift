@@ -38,7 +38,7 @@ openshift_console_install=true
 openshift_console_hostname=okd-calico-console.sonic.com
  
 # this is need for openshift metrics and logging
-openshift_metrics_install_metric=false
+openshift_metrics_install_metrics=false
 
 # config for logging
 openshift_logging_install_logging=false

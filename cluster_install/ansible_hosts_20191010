@@ -37,7 +37,7 @@ openshift_console_hostname=okd00-console.sonic.com
 #openshift_node_groups=[{'name': 'node-config-all-in-one', 'labels': ['node-role.kubernetes.io/master=true', 'node-role.kubernetes.io/infra=true', 'node-role.kubernetes.io/compute=true'], 'edits': [{ 'key': 'kubeletArguments.pods-per-core','value': ['20']}]}]
  
 # this is need for openshift metrics and logging
-openshift_metrics_install_metric=true
+openshift_metrics_install_metrics=true
 openshift_metrics_image_version=v3.11.0
 openshift_hosted_metrics_public_url=okd00-metrics.sonic.com
 openshift_logging_install_logging=true
