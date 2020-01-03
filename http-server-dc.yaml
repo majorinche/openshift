@@ -1,0 +1,22 @@
+kind: DeploymentConfig
+apiVersion: v1
+metadata:
+  name: http-server
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: http-server
+    spec:
+      containers:
+      - name: http-server
+        image: docker-repo.sonic.com:443/majorinche/http_server:0.1
+        ports:
+          - containerPort: 8000
+            protocol: "TCP"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+
