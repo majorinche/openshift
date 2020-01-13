@@ -1,0 +1,231 @@
+apiVersion: kubeflow.org/v1
+kind: TFJob
+metadata:
+  labels:
+    aios_job_type: tfjob
+    createdBy: aios-operator
+    producer: aios
+    release: tt2
+  name: tt2
+  namespace: aios
+spec:
+  tfReplicaSpecs:
+    PS:
+      replicas: 1
+      restartPolicy: Never
+      template:
+        metadata:
+          annotations:
+            k8s.v1.cni.cncf.io/networks: '[{ "name": "sriov-conf" }]'
+          labels:
+            aios_job_type: tfjob
+            createdBy: aios-operator
+            producer: aios
+            release: tt2
+        spec:
+          affinity:
+            podAffinity:
+              preferredDuringSchedulingIgnoredDuringExecution:
+              - podAffinityTerm:
+                  labelSelector:
+                    matchExpressions:
+                    - key: release
+                      operator: In
+                      values:
+                      - tt2
+                    - key: group_name
+                      operator: In
+                      values:
+                      - kubeflow.org
+                  topologyKey: kubernetes.io/hostname
+                weight: 100
+              - podAffinityTerm:
+                  labelSelector:
+                    matchExpressions:
+                    - key: tf-replica-type
+                      operator: In
+                      values:
+                      - worker
+                  topologyKey: kubernetes.io/hostname
+                weight: 60
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+              - labelSelector:
+                  matchExpressions:
+                  - key: tf-replica-type
+                    operator: In
+                    values:
+                    - ps
+                topologyKey: kubernetes.io/hostname
+          containers:
+          - args:
+            - ./runbenchmarks.sh alexnet "1024" parameter_server None grpc+gdr && sleep 36000
+            command:
+            - /bin/sh
+            - -c
+            env:
+            - name: CLUSTAR_AIOS_HOST
+              value: workbench-internal:8080
+            - name: CLUSTAR_DATA_DIR
+              value: /data/test/
+            - name: CLUSTAR_EVALUATOR_GPU_NUM
+              value: "1"
+            - name: CLUSTAR_MODEL_DIR
+              value: /output/test/174
+            - name: CLUSTAR_RPC_LAYER
+              value: grpc+gdr
+            - name: CLUSTAR_TASK_NAME
+              value: tt2
+            - name: CLUSTAR_TRAIN_DISTRIBUTION
+              value: ParameterServer
+            - name: CLUSTAR_WORKER_GPU_NUM
+              value: "1"
+            - name: REDIS_HOST
+              value: aios-redis-headless
+            - name: REDIS_PORT
+              value: "6379"
+            image: 10.20.0.63:31896/clustarai/test/tensorflow:py3-191219022838
+            imagePullPolicy: IfNotPresent
+            name: tensorflow
+            resources:
+              limits:
+                rdma/vhca: "1"
+              requests:
+                cpu: "1"
+                memory: 4Gi
+                rdma/vhca: "1"
+            securityContext:
+              capabilities:
+                add:
+                - IPC_LOCK
+            volumeMounts:
+            - mountPath: /data
+              name: claim-data
+            - mountPath: /output
+              name: claim-output
+          imagePullSecrets:
+          - name: registry-cred
+          tolerations:
+          - effect: NoSchedule
+            key: nvidia.com/gpu
+            operator: Exists
+          volumes:
+          - name: claim-data
+            persistentVolumeClaim:
+              claimName: claim-data
+          - name: claim-output
+            persistentVolumeClaim:
+              claimName: claim-output
+    Worker:
+      replicas: 2
+      restartPolicy: Never
+      template:
+        metadata:
+          annotations:
+            k8s.v1.cni.cncf.io/networks: '[{ "name": "sriov-conf" }]'
+          creationTimestamp: null
+          labels:
+            aios_job_type: tfjob
+            createdBy: aios-operator
+            producer: aios
+            release: tt2
+        spec:
+          affinity:
+            podAffinity:
+              preferredDuringSchedulingIgnoredDuringExecution:
+              - podAffinityTerm:
+                  labelSelector:
+                    matchExpressions:
+                    - key: release
+                      operator: In
+                      values:
+                      - tt2
+                    - key: group_name
+                      operator: In
+                      values:
+                      - kubeflow.org
+                  topologyKey: kubernetes.io/hostname
+                weight: 100
+              - podAffinityTerm:
+                  labelSelector:
+                    matchExpressions:
+                    - key: tf-replica-type
+                      operator: In
+                      values:
+                      - ps
+                  topologyKey: kubernetes.io/hostname
+                weight: 60
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+              - labelSelector:
+                  matchExpressions:
+                  - key: tf-replica-type
+                    operator: In
+                    values:
+                    - worker
+                topologyKey: kubernetes.io/hostname
+          containers:
+          - args:
+            - ./runbenchmarks.sh alexnet "1024" parameter_server None grpc+gdr && sleep 36000
+            command:
+            - /bin/sh
+            - -c
+            env:
+            - name: CLUSTAR_AIOS_HOST
+              value: workbench-internal:8080
+            - name: CLUSTAR_DATA_DIR
+              value: /data/test/
+            - name: CLUSTAR_EVALUATOR_GPU_NUM
+              value: "1"
+            - name: CLUSTAR_MODEL_DIR
+              value: /output/test/174
+            - name: CLUSTAR_RPC_LAYER
+              value: grpc+gdr
+            - name: CLUSTAR_TASK_NAME
+              value: tt2
+            - name: CLUSTAR_TRAIN_DISTRIBUTION
+              value: ParameterServer
+            - name: CLUSTAR_WORKER_GPU_NUM
+              value: "1"
+            - name: REDIS_HOST
+              value: aios-redis-headless
+            - name: REDIS_PORT
+              value: "6379"
+            image: 10.20.0.63:31896/clustarai/test/tensorflow:py3-191219022838
+            imagePullPolicy: IfNotPresent
+            name: tensorflow
+            resources:
+              limits:
+                nvidia.com/gpu: "1"
+                rdma/vhca: "1"
+              requests:
+                cpu: "1"
+                memory: 4Gi
+                nvidia.com/gpu: "1"
+                rdma/vhca: "1"
+            securityContext:
+              capabilities:
+                add:
+                - IPC_LOCK
+            volumeMounts:
+            - mountPath: /data
+              name: claim-data
+            - mountPath: /output
+              name: claim-output
+          hostAliases:
+          - hostnames:
+            - codemeter.server
+            ip: 10.0.32.34
+          imagePullSecrets:
+          - name: registry-cred
+          tolerations:
+          - effect: NoSchedule
+            key: nvidia.com/gpu
+            operator: Exists
+          volumes:
+          - name: claim-data
+            persistentVolumeClaim:
+              claimName: claim-data
+          - name: claim-output
+            persistentVolumeClaim:
+              claimName: claim-output
