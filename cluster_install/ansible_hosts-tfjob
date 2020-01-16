@@ -1,0 +1,57 @@
+# Create an OSEv3 group that contains the master, nodes, etcd, and lb groups.
+# The lb group lets Ansible configure HAProxy as the load balancing solution.
+# Comment lb out if your load balancer is pre-configured.
+[OSEv3:children]
+masters
+nodes
+etcd
+ 
+# Set variables common for all OSEv3 hosts
+[OSEv3:vars]
+ansible_ssh_user=root
+openshift_deployment_type=origin
+openshift_release=3.11
+openshift_image_tag=v3.11.0
+ 
+# uncomment the following to enable htpasswd authentication; defaults to AllowAllPasswordIdentityProvider
+#openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider'}]
+ 
+# Native high availbility cluster method with optional load balancer.
+# If no lb group is defined installer assumes that a load balancer has
+# been preconfigured. For installation the value of
+# openshift_master_cluster_hostname must resolve to the load balancer
+# or to one or all of the masters defined in the inventory if no load
+# baancer is present.
+# this is need for multi-master environment
+openshift_master_cluster_method=native
+openshift_master_cluster_public_hostname=tfjob-platform.sonic.com
+ 
+# this is need for non-production environment
+openshift_disable_check=disk_availability,memory_availability,docker_image_availability,docker_storage
+ 
+# this is need for openshift-console environment
+openshift_console_install=true
+openshift_console_hostname=tfjob-console.sonic.com
+# apply updated node defaults
+#openshift_node_groups=[{'name': 'node-config-all-in-one', 'labels': ['node-role.kubernetes.io/master=true', 'node-role.kubernetes.io/infra=true', 'node-role.kubernetes.io/compute=true'], 'edits': [{ 'key': 'kubeletArguments.pods-per-core','value': ['20']}]}]
+ 
+# this is need for openshift metrics and logging
+openshift_metrics_install_metric=true
+openshift_metrics_image_version=v3.11.0
+openshift_hosted_metrics_public_url=tfjob-metrics.sonic.com
+openshift_node_groups=[{'name': 'node-config-all-in-one', 'labels': ['node-role.kubernetes.io/master=true','node-role.kubernetes.io/infra=true','node-role.kubernetes.io/compute=true']}]
+ 
+os_sdn_network_plugin_name='redhat/openshift-ovs-subnet'
+ 
+# host group for masters
+[masters]
+e0604.sonic.com
+ 
+# host group for etcd
+[etcd]
+e0604.sonic.com
+ 
+# host group for nodes, includes region info
+[nodes]
+e0604.sonic.com openshift_node_group_name='node-config-all-in-one'
+e0605.sonic.com openshift_node_group_name='node-config-all-in-one'
