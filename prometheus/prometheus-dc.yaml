@@ -1,0 +1,48 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  labels:
+    name: prometheus-deployment
+  name: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+      - image: docker-repo.sonic.com:443/prometheus/prometheus:v2.17.1
+        name: prometheus
+        command:
+        - "/bin/prometheus"
+        args:
+        - "--config.file=/etc/prometheus/prometheus.yml"
+        - "--storage.tsdb.path=/prometheus"
+        - "--storage.tsdb.retention=24h"
+        ports:
+        - containerPort: 9090
+          protocol: TCP
+        volumeMounts:
+        - mountPath: "/prometheus"
+          name: prometheus-data
+        - mountPath: "/etc/prometheus"
+          name: prometheus-config
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+          limits:
+            cpu: 500m
+            memory: 2500Mi
+      serviceAccountName: prometheus    
+      volumes:
+      - name: prometheus-data
+        persistentVolumeClaim:
+          claimName: prometheus-data-pvc
+      - name: prometheus-config
+        configMap:
+          name: prometheus-config
