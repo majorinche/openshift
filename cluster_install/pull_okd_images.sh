@@ -25,4 +25,6 @@ docker pull docker-repo.sonic.com:443/nfvpe/multus:v3.2
 docker tag docker-repo.sonic.com:443/nfvpe/multus:v3.2 nfvpe/multus:v3.2
 docker pull docker-repo.sonic.com:443/openshift/origin-metrics-hawkular-metrics:v3.11.0
 docker pull docker-repo.sonic.com:443/openshift/origin-metrics-cassandra:v3.11.0
+docker pull docker-repo.sonic.com:443/openshift/prometheus-node-exporter:v0.16.0
+docker tag docker-repo.sonic.com:443/openshift/prometheus-node-exporter:v0.16.0 openshift/prometheus-node-exporter:v0.16.0
 
