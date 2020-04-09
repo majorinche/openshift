@@ -1,0 +1,8 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-client-sc
+provisioner: okd-platform.caiyun.com/nfs-client-provisioner
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+
